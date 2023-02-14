@@ -99,9 +99,17 @@ module.exports = (() => {
   
         //by here, we have a match, we need now to reformat the string and push it
         const xx=el;
-        const matches=regex.exec(xx);
-        BdApi.showToast(matches[0]);
-        rendered.push(el);
+        let matches=regex.exec(xx);
+        // BdApi.showToast(matches[0]);
+        let joincopy= React.createElement('a', {
+              title: "Copy Join/invite code: " + matches[0],
+              rel: 'noreferrer noopener',
+              onClick: () => {DiscordNative.clipboard.copy(matches[0])},
+              role: 'button',
+              target: '_blank'
+            }, matches[0])
+          
+        rendered.push(joincopy);
         // BdApi.showToast(el);
         // const mentions = el.split(new RegExp("\\/(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}"))
          
