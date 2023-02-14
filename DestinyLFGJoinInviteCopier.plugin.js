@@ -55,13 +55,13 @@ module.exports = (() => {
         stop() {}
     } : (([Plugin, Api]) => {
         const plugin = (Plugin, Library) => {
-            const switchCss = ``;
-    const inboxCss = ``
+    //         const switchCss = ``;
+    // const inboxCss = ``;
   const defaultSettings = {
     whitelistedUsers: [],
     keywords:  [
-      "/\\/join ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}/",
-      "/\\/invite ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}/"
+      "/\\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\\d{4}/",
+      "/\\/invite ([A-Za-z0-9_ @!:()$%&*~.])*#\\d{4}/"
   ],
     ignoredUsers: [],
     guilds: {},
@@ -96,22 +96,22 @@ module.exports = (() => {
       this.cancelPatches = [];
       this.loadSettings();
      
-      PluginUtilities.addStyle(this.getName(), switchCss);
-      PluginUtilities.addStyle(this.getName(), inboxCss);
+      // PluginUtilities.addStyle(this.getName(), switchCss);
+      // PluginUtilities.addStyle(this.getName(), inboxCss);
   
       let dispatchModule = BdApi.findModuleByProps('dispatch', 'subscribe');
       BdApi.Patcher.after(this.getName(), dispatchModule, 'dispatch', this.handleMessage.bind(this));
   
-      const TitleBar = WebpackModules.getModule(m => Object.values(m).some(m => m?.Title && m?.Caret && m?.toString?.()?.includes('toolbar')), { searchGetters: false });
-      this.inboxPanel = null;
-      Patcher.after(TitleBar, "ZP", (self, [props], ret) => {
-        if (props.toolbar.type === 'function') return;
-        if (this.inboxPanel == null) {
-          this.inboxPanel = this.buildInboxPanel();
-        }
-        if (typeof props.toolbar.props.children[0].splice !== 'function') return;
-        props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
-      });
+      // const TitleBar = WebpackModules.getModule(m => Object.values(m).some(m => m?.Title && m?.Caret && m?.toString?.()?.includes('toolbar')), { searchGetters: false });
+      // this.inboxPanel = null;
+      // Patcher.after(TitleBar, "ZP", (self, [props], ret) => {
+      //   if (props.toolbar.type === 'function') return;
+      //   if (this.inboxPanel == null) {
+      //     this.inboxPanel = this.buildInboxPanel();
+      //   }
+      //   if (typeof props.toolbar.props.children[0].splice !== 'function') return;
+      //   props.toolbar.props.children[0].splice(Math.max(3, props.toolbar.props.children[0].length - 1), 0, this.inboxPanel);
+      // });
   
       this.userId = Modules.UserStore.getCurrentUser().id;
     }
@@ -243,41 +243,41 @@ module.exports = (() => {
     } 
   
     sendMatchNotification(thumbnail, title, text, redirect, message) {
-      Modules.NotificationModule.showNotification(
-        thumbnail,
-        title,
-        text,
-        {
-        },
-        // opts
-        {
-          sound: this.settings.notifications ? 'message1' : null,
-          onClick: () => {
-            delete this.settings.unreadMatches[message.id];
-            this.saveSettings(); 
-            Modules.NavigationUtils.transitionTo(
-              redirect,
-              undefined,
-              undefined,
-            );
-          }
-        }
-      );
+      // Modules.NotificationModule.showNotification(
+      //   thumbnail,
+      //   title,
+      //   text,
+      //   {
+      //   },
+      //   // opts
+      //   {
+      //     sound: this.settings.notifications ? 'message1' : null,
+      //     onClick: () => {
+      //       delete this.settings.unreadMatches[message.id];
+      //       this.saveSettings(); 
+      //       Modules.NavigationUtils.transitionTo(
+      //         redirect,
+      //         undefined,
+      //         undefined,
+      //       );
+      //     }
+      //   }
+      // );
     }
   
     pingWhitelistMatch(message, channel, guild) {
-      Logger.info('Whitelist match found!');
+      // Logger.info('Whitelist match found!');
       
-      this.sendMatchNotification(
-        `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
-        `User match in ${guild}!`,
-        `${message.author.username} typed in #${channel.name}.`,
-        `/channels/${message.guild_id}/${channel.id}/${message.id}`,
-        message,
-      );
-      message._match = `User ID ${message.author.id}`;
-      this.settings.unreadMatches[message.id] = message;
-      this.saveSettings();
+      // this.sendMatchNotification(
+      //   `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
+      //   `User match in ${guild}!`,
+      //   `${message.author.username} typed in #${channel.name}.`,
+      //   `/channels/${message.guild_id}/${channel.id}/${message.id}`,
+      //   message,
+      // );
+      // message._match = `User ID ${message.author.id}`;
+      // this.settings.unreadMatches[message.id] = message;
+      // this.saveSettings();
     }
   
     pingSuccess(message, channel, guild, match) {
@@ -288,6 +288,9 @@ module.exports = (() => {
       mymatch = match.exec(message.content);
       Logger.info(mymatch[0]);
       BdApi.showToast(`${message.author.username} matched ${mymatch[0]} in #${channel.name}.`);
+      // message.content="hi";
+      // DiscordNative.clipboard.copy(mymatch[0]);
+      BdApi.showToast(`${message.content}`);
       //BdApi.alert();
       this.sendMatchNotification(
         `https://cdn.discordapp.com/avatars/${message.author.id}/${message.author.avatar}.webp?size=256`,
@@ -305,18 +308,18 @@ module.exports = (() => {
     }
   
     makeSwitch(iv, callback) {
-      let label = document.createElement('label');
-      label.className = 'switch';
-      let input = document.createElement('input');
-      input.setAttribute('type', 'checkbox');
-      input.checked = iv;
-      let div = document.createElement('div');
-      label.append(input);
-      label.append(div);
-      input.addEventListener('input', function (e) { 
-        callback(this.checked);
-      });
-      return label;
+      // let label = document.createElement('label');
+      // label.className = 'switch';
+      // let input = document.createElement('input');
+      // input.setAttribute('type', 'checkbox');
+      // input.checked = iv;
+      // let div = document.createElement('div');
+      // label.append(input);
+      // label.append(div);
+      // input.addEventListener('input', function (e) { 
+      //   callback(this.checked);
+      // });
+      // return label;
     }
   
     
