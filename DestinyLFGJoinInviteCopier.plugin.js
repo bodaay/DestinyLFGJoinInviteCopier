@@ -158,20 +158,21 @@ module.exports = (() => {
   `;
   const defaultSettings = {
     whitelistedUsers: [],
-    keywords: [],
+    keywords: ["/\\/join ([A-Za-z0-9_ ])*#\\d{4}/i",
+    "/\\/invite ([A-Za-z0-9_ ])*#\\d{4}/i"],
     ignoredUsers: [],
     guilds: {},
     enabled: true,
     unreadMatches: {},
     notifications: true,
     allowSelf: false,
-    allowEmbeds: true,
+    allowEmbeds: false,
     allowBots: true,
-  };
+  }; 
   const {
     DOMTools,
     Patcher,
-    Logger,
+    Logger, 
     Settings,
     Utilities,
     PluginUtilities,
