@@ -2,9 +2,9 @@
  * @name DestinyLFGJoinInviteCopier
  * @authorLink https://github.com/bodaay
  * @website https://github.com/bodaay/DestinyLFGJoinInviteCopier
- * @source https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js
+ * @source https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js
  * @version 1.0.0
- * @updateUrl https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -31,7 +31,7 @@
 @else@*/ 
 
 module.exports = (() => {
-    const config = {"info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","discord_id":"135895345296048128","github_username":"bodaay"}],"version":"1.0.0","description":"Highlight /join /invite command in Destiny LFG","github":"https://github.com/bodaay/DestinyLFGJoinInviteCopier","github_raw":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js","authorLink":"https://github.com/bodaay","updateUrl":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js"},"changelog":[],"main":"index.js"};
+    const config = {"info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","discord_id":"135895345296048128","github_username":"bodaay"}],"version":"1.0.0","description":"Highlight /join /invite command in Destiny LFG","github":"https://github.com/bodaay/DestinyLFGJoinInviteCopier","github_raw":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js","authorLink":"https://github.com/bodaay","updateUrl":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js"},"changelog":[],"main":"index.js"};
   
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
@@ -159,17 +159,17 @@ module.exports = (() => {
   const defaultSettings = {
     whitelistedUsers: [],
     keywords:  [
-      "/\\/join ([A-Za-z0-9_ ])*#d{4}/i",
-      "/\\/invite ([A-Za-z0-9_ ])*#d{4}/i"
+      "/\\/join ([A-Za-z0-9_ @!$%&*~.])*#d{4}/i",
+      "/\\/invite ([A-Za-z0-9_ @!$%&*~.])*#d{4}/i"
   ],
     ignoredUsers: [],
     guilds: {},
     enabled: true,
     unreadMatches: {},
     notifications: true, 
-    allowSelf: false,
+    allowSelf: false,  
     allowEmbeds: false, 
-    allowBots: true,
+    allowBots: true, 
   };  
   const {
     DOMTools,
