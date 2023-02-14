@@ -54,14 +54,13 @@ module.exports = (() => {
         const plugin = (Plugin, Library) => {
   const { Patcher, WebpackModules, DiscordModules } = Library
   const { React } = DiscordModules
-  const RegexEscape = function(string) {
-    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  };
-  const patter1= "/\\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\\d{4}/"
+  // const RegexEscape = function(string) {
+  //   return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  // };
   
   // const regex = /(?<!\w)\/?[ur]\/[\w\d-]{2,21}/g
   // const regex = /(?<!\w)\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\d{4}/gi
-  const regex = new RegExp("(?<!\\w)\\/?(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}");
+  const regex = new RegExp("\\/(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}")
   
   return class RedditMentions extends Plugin {
     onStart() {
@@ -100,16 +99,20 @@ module.exports = (() => {
         //by here, we have a match, we need now to reformat the string and push it
         const xx=el;
         let matches=regex.exec(xx);
+        console.log(matches);
+        // BdApi.showToast(matches.length);
         // BdApi.showToast(matches[0]);
         let joincopy= React.createElement('a', {
               title: "Copy Join/invite code: " + matches[0],
               rel: 'noreferrer noopener',
-              onClick: () => {DiscordNative.clipboard.copy(matches[0])},
+              onClick: () => {DiscordNative.clipboard.copy(matches[0]);BdApi.showToast("Copied: '" + matches[0]+ "' To Cipboard")},
               role: 'button',
               target: '_blank'
-            }, matches[0])
-          
+            }, "      *** Copy Join/invite Code ***    ")
+        rendered.push(el);
+        
         rendered.push(joincopy);
+        
         // BdApi.showToast(el);
         // const mentions = el.split(new RegExp("\\/(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}"))
          
