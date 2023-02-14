@@ -31,7 +31,7 @@
 @else@*/ 
 
 module.exports = (() => {
-    const config = {"info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","discord_id":"135895345296048128","github_username":"bodaay"}],"version":"1.0.0","description":"Highlight /join /invite command in Destiny LFG","github":"https://github.com/sarahkittyy/KeywordTracker","github_raw":"https://raw.githubusercontent.com/sarahkittyy/KeywordTracker/main/KeywordTracker.plugin.js","authorLink":"https://github.com/bodaay","updateUrl":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js"},"changelog":[],"main":"index.js"};
+    const config = {"info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","discord_id":"135895345296048128","github_username":"bodaay"}],"version":"1.0.0","description":"Highlight /join /invite command in Destiny LFG","github":"https://github.com/bodaay/DestinyLFGJoinInviteCopier","github_raw":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js","authorLink":"https://github.com/bodaay","updateUrl":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/main/DestinyLFGJoinInviteCopier.plugin.js"},"changelog":[],"main":"index.js"};
   
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
@@ -158,17 +158,19 @@ module.exports = (() => {
   `;
   const defaultSettings = {
     whitelistedUsers: [],
-    keywords: ["/\\/join ([A-Za-z0-9_ ])*#\\d{4}/i",
-    "/\\/invite ([A-Za-z0-9_ ])*#\\d{4}/i"],
+    keywords:  [
+      "/\\/join ([A-Za-z0-9_ ])*#d{4}/i",
+      "/\\/invite ([A-Za-z0-9_ ])*#d{4}/i"
+  ],
     ignoredUsers: [],
     guilds: {},
     enabled: true,
     unreadMatches: {},
-    notifications: true,
+    notifications: true, 
     allowSelf: false,
-    allowEmbeds: false,
+    allowEmbeds: false, 
     allowBots: true,
-  }; 
+  };  
   const {
     DOMTools,
     Patcher,
@@ -177,7 +179,7 @@ module.exports = (() => {
     Utilities,
     PluginUtilities,
     ReactTools,
-    Modals,
+    Modals, 
     Tooltip,
     Toasts: Toast,
     DiscordModules: Modules,
@@ -418,12 +420,12 @@ module.exports = (() => {
     saveSettings() {
       // clear out empty keywords :)
       this.settings.keywords = this.settings.keywords.filter((v) => v.trim().length > 0);
-      PluginUtilities.saveSettings('KeywordTracker', this.settings);
+      PluginUtilities.saveSettings('DestinyLFGJoinInviteCopier', this.settings);
     }
   
     loadSettings() {
       // load settings
-      this.settings = Utilities.deepclone(PluginUtilities.loadSettings('KeywordTracker', defaultSettings));
+      this.settings = Utilities.deepclone(PluginUtilities.loadSettings('DestinyLFGJoinInviteCopier', defaultSettings));
     }
   
     // build the inbox panel placed directly after the pinned messages button
