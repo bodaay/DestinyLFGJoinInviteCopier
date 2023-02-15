@@ -57,7 +57,7 @@ module.exports = (() => {
         
           const regex = /\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4}/gi
         
-          return class RedditMentions extends Plugin {
+          return class DestinyLFGJoinInviteCopier extends Plugin {
             onStart() {
               const parser = WebpackModules.getByProps('parse', 'parseTopic')
         
@@ -80,7 +80,7 @@ module.exports = (() => {
                   if (el.type.name === 'StringPart') {
                     el.props.parts = this.inject({}, el.props.parts)
                   }
-                  console.log("eee" + el)
+                  // console.log("eee" + el)
                   rendered.push(el);
                   continue;
                 }
@@ -90,10 +90,10 @@ module.exports = (() => {
                   continue;
                 }
                 const mentions = el.split(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4})/i)
-                console.log(mentions)
+                // console.log(mentions)
                 for (const mention of mentions) {
                   if (!regex.test(mention)) {
-                    console.log("xxxx  ===  " + mention)
+                    // console.log("xxxx  ===  " + mention)
                     rendered.push(mention)
                     continue
                   }
