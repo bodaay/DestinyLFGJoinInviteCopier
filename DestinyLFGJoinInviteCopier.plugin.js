@@ -62,7 +62,7 @@ module.exports = (() => {
   // const regex = /(?<!\w)\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\d{4}/gi
   const regex = new RegExp("\\/(join|invite) ([A-Za-z0-9_ @,!$%-&*~.])*#\\d{4}")
   
-  return class RedditMentions extends Plugin {
+  return class DestinyLFGJoinInviteCopier extends Plugin {
     onStart() {
       const parser = WebpackModules.getByProps('parse', 'parseTopic')
   
@@ -74,7 +74,7 @@ module.exports = (() => {
     }
   
     inject(args, res) {
-      const rendered = []
+      const rendered = [] 
   
       for (const el of res) {
         if (typeof el !== 'string') {
