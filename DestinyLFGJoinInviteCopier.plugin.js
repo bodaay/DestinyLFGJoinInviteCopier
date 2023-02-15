@@ -28,7 +28,7 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"main":"index.js","info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","github_username":"bodaay"}],"version":"1.0.0","description":"Renders subreddit and user mentions as hyperlinks","github":"https://github.com/vBread/bd-contributions/tree/master/RedditMentions","github_raw":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js"}};
+    const config = {"main":"index.js","info":{"name":"DestinyLFGJoinInviteCopier","authors":[{"name":"Khalefa","github_username":"bodaay"}],"version":"1.0.0","description":"Render /join /invite Destiny LFG as hyperlinks for easy copying","github":"https://github.com/vBread/bd-contributions/tree/master/RedditMentions","github_raw":"https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js"}};
   
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
