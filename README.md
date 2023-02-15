@@ -1,6 +1,10 @@
 # DestinyLFGJoinInviteCopier
 Simple BetterDiscord Plugin to make copying /join /invite easier
 
+This code is heavily based on the plugin:
+
+https://betterdiscord.app/plugin/RedditMentions
+
 
 You need to install BetterDiscord To Test it out
 
