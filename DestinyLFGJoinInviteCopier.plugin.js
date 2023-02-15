@@ -52,96 +52,71 @@ module.exports = (() => {
         stop() {}
     } : (([Plugin, Api]) => {
         const plugin = (Plugin, Library) => {
-  const { Patcher, WebpackModules, DiscordModules } = Library
-  const { React } = DiscordModules
-  // const RegexEscape = function(string) {
-  //   return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  // };
-  
-  // const regex = /(?<!\w)\/?[ur]\/[\w\d-]{2,21}/g
-  // const regex = /(?<!\w)\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\d{4}/gi
-  const regex = new RegExp("\\/(join|invite) ([A-Za-z0-9_ @,!$%\\-&*~.])*#\\d{4}",'i')
-  
-  return class DestinyLFGJoinInviteCopier extends Plugin {
-    onStart() {
-      const parser = WebpackModules.getByProps('parse', 'parseTopic')
-  
-      Patcher.after(parser, 'parse', (_, args, res) => this.inject(args, res))
-    }
-  
-    onStop() {
-      Patcher.unpatchAll()
-    }
-  
-    inject(args, res) {
-      const rendered = [] 
-  
-      for (const el of res) {
-        if (typeof el !== 'string') {
-          if (['u', 'em', 'strong'].includes(el.type)) {
-            el.props.children = this.inject({}, el.props.children)
-          }
-  
-          if (el.type.name === 'StringPart') {
-            el.props.parts = this.inject({}, el.props.parts)
-          }
-  
-          rendered.push(el);
-          continue;
-        }
-       
-        if (!regex.test(el)) {
-          // BdApi.showToast(el);
-          rendered.push(el);
-          continue;
-        }//nothing match, pust it as it is, and continue
-  
-        //by here, we have a match, we need now to reformat the string and push it
-        const xx=el;
-        let matches=regex.exec(xx);
-        console.log(matches);
-        // BdApi.showToast(matches.length);
-        // BdApi.showToast(matches[0]);
-        let joincopy= React.createElement('a', {
-              title: "Copy Join/invite code: " + matches[0],
-              rel: 'noreferrer noopener',
-              onClick: () => {DiscordNative.clipboard.copy(matches[0]);BdApi.showToast("Copied: '" + matches[0]+ "' To Cipboard")},
-              role: 'button',
-              target: '_blank'
-            }, "      *** Copy Join/invite Code ***    ")
-        rendered.push(el);
+          const { Patcher, WebpackModules, DiscordModules } = Library
+          const { React } = DiscordModules
         
-        rendered.push(joincopy);
+          const regex = /\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4}/gi
         
-        // BdApi.showToast(el);
-        // const mentions = el.split(new RegExp("\\/(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}"))
-         
-        // for (const mention of mentions) {
-        //   if (!regex.test(mention)) {
-        //     BdApi.showToast(mention);
-        //     rendered.push(mention)
-        //     continue
-        //   }
-        //   BdApi.showToast("okkkk");
-        //   const entity = mention.match(new RegExp("\\/(join|invite) ([A-Za-z0-9_ @!$%&*~.])*#\\d{4}"))[0]
-  
-        //   rendered.push(
-        //     React.createElement('a', {
-        //       title: entity,
-        //       rel: 'noreferrer noopener',
-        //       href: `https://reddit.com/${entity}`,
-        //       role: 'button',
-        //       target: '_blank'
-        //     }, mention)
-        //   )
-        // }
+          return class RedditMentions extends Plugin {
+            onStart() {
+              const parser = WebpackModules.getByProps('parse', 'parseTopic')
+        
+              Patcher.after(parser, 'parse', (_, args, res) => this.inject(args, res))
+            }
+        
+            onStop() {
+              Patcher.unpatchAll()
+            }
+        
+            inject(args, res) {
+              const rendered = []
+        
+              for (const el of res) {
+                if (typeof el !== 'string') {
+                  if (['u', 'em', 'strong'].includes(el.type)) {
+                    el.props.children = this.inject({}, el.props.children)
+                  }
+        
+                  if (el.type.name === 'StringPart') {
+                    el.props.parts = this.inject({}, el.props.parts)
+                  }
+                  console.log("eee" + el)
+                  rendered.push(el);
+                  continue;
+                }
+                
+                if (!regex.test(el)) {
+                  rendered.push(el);
+                  continue;
+                }
+                const mentions = el.split(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4})/i)
+                console.log(mentions)
+                for (const mention of mentions) {
+                  if (!regex.test(mention)) {
+                    console.log("xxxx  ===  " + mention)
+                    rendered.push(mention)
+                    continue
+                  }
+        
+                  const entity = mention.match(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4})/i)[1]
+                  
+                  rendered.push(
+                    React.createElement('a', {
+                      title: "Copy: '" + entity + "'",
+                      rel: 'noreferrer noopener',
+                      onClick: () => {DiscordNative.clipboard.copy(entity);BdApi.showToast("Copied: '" + entity + "' To Cipboard")},
+                      role: 'button',
+                      target: '_blank'
+                    }, entity)
+                  )
+                }
+              }
+        
+              return rendered
       }
-  
-      return rendered
     }
-  }
   };
-        return plugin(Plugin, Api);
-    })(global.ZeresPluginLibrary.buildPlugin(config));
+          return plugin(Plugin, Api);
+      })(global.ZeresPluginLibrary.buildPlugin(config));
   })();
   /*@end@*/
