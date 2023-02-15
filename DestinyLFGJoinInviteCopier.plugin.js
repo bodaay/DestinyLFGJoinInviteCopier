@@ -60,7 +60,7 @@ module.exports = (() => {
   
   // const regex = /(?<!\w)\/?[ur]\/[\w\d-]{2,21}/g
   // const regex = /(?<!\w)\/join ([A-Za-z0-9_ @!:()$%&*~.])*#\d{4}/gi
-  const regex = new RegExp("\\/(join|invite) ([A-Za-z0-9_ @,!$%-&*~.])*#\\d{4}",'i')
+  const regex = new RegExp("\\/(join|invite) ([A-Za-z0-9_ @,!$%\\-&*~.])*#\\d{4}",'i')
   
   return class DestinyLFGJoinInviteCopier extends Plugin {
     onStart() {
