@@ -1,5 +1,5 @@
 # DestinyLFGJoinInviteCopier
-Simple BetterDiscord Plugin to make copying /join /invite Destiny LFG command easier
+Simple BetterDiscord Plugin to make copying /join /invite Destiny LFG commands easier
 
 This code is heavily based on the plugin:
 

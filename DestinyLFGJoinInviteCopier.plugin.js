@@ -104,7 +104,7 @@ module.exports = (() => {
                     React.createElement('a', {
                       title: "Copy: '" + entity + "'",
                       rel: 'noreferrer noopener',
-                      onClick: () => {DiscordNative.clipboard.copy(entity);BdApi.showToast("Copied: '" + entity + "' To Cipboard")},
+                      onClick: () => {DiscordNative.clipboard.copy(entity);BdApi.showToast("Copied: '" + entity + "' To Clipboard")},
                       role: 'button',
                       target: '_blank'
                     }, entity)
