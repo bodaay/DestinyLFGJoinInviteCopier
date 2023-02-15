@@ -55,7 +55,7 @@ module.exports = (() => {
           const { Patcher, WebpackModules, DiscordModules } = Library
           const { React } = DiscordModules
         
-          const regex = /\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4}/gi
+          const regex = /\/(?:join|invite) (?:[A-Za-z0-9_ @,!$\^%\-&*~.])*#\d{4}/gi
         
           return class DestinyLFGJoinInviteCopier extends Plugin {
             onStart() {
@@ -89,7 +89,7 @@ module.exports = (() => {
                   rendered.push(el);
                   continue;
                 }
-                const mentions = el.split(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4})/i)
+                const mentions = el.split(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$\^%\-&*~.])*#\d{4})/i)
                 // console.log(mentions)
                 for (const mention of mentions) {
                   if (!regex.test(mention)) {
@@ -98,7 +98,7 @@ module.exports = (() => {
                     continue
                   }
         
-                  const entity = mention.match(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$%\-&*~.])*#\d{4})/i)[1]
+                  const entity = mention.match(/(\/(?:join|invite) (?:[A-Za-z0-9_ @,!$\^%\-&*~.])*#\d{4})/i)[1]
                   
                   rendered.push(
                     React.createElement('a', {
