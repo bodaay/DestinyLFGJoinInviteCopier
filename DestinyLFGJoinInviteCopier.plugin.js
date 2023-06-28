@@ -4,7 +4,7 @@
  * @description Render /join /invite Destiny LFG as hyperlinks for easy copying
  * @website https://github.com/bodaay/DestinyLFGJoinInviteCopier
  * @source https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js
- * @version 1.1.0
+ * @version 1.2.0
  */
 /*@cc_on
 @if (@_jscript)
@@ -37,6 +37,7 @@ module.exports = class DestinyLFGJoinInviteCopier {
   start() {
     // Do stuff when enabled
     const parser = BdApi.Webpack.getModule(BdApi.Webpack.Filters.byProps("parse", "parseTopic"));
+    // console.log(parser)
     BdApi.Patcher.after("DestinyLFGPatcher", parser, 'parse', (_, args, res) => this.inject(args, res));
   }
   stop() {
@@ -44,52 +45,43 @@ module.exports = class DestinyLFGJoinInviteCopier {
     BdApi.Patcher.unpatchAll("DestinyLFGPatcher");
   }
   inject(args, res) {
-   
+    // console.log(args[0])
     const regex = /\/(?:join|invite) .+#\d{4}/gi
     const rendered = []
-    
-    for (const el of res) {
-      if (typeof el !== 'string') {
-        if (['u', 'em', 'strong'].includes(el.type)) {
-          el.props.children = this.inject({}, el.props.children)
-        }
-
-        if (el.type.name === 'StringPart') {
-          el.props.parts = this.inject({}, el.props.parts)
-        }
-        // console.log("eee" + el)
-        rendered.push(el);
-        continue;
-      }
- 
-      if (!regex.test(el)) {
-        rendered.push(el);
-        continue;
-      }
-      const mentions = el.split(/(\/(?:join|invite) .+#\d{4})/i)
-      // console.log(mentions)
-      for (const mention of mentions) {
-        if (!regex.test(mention)) {
-          // console.log("xxxx  ===  " + mention)
-          rendered.push(mention)
-          continue
-        }
-
-        const entity = mention.match(/(\/(?:join|invite) .+#\d{4})/i)[1]
-
-        rendered.push(
-          BdApi.React.createElement('a', {
-            title: "Copy: '" + entity + "'",
-            rel: 'noreferrer noopener',
-            onClick: () => { DiscordNative.clipboard.copy(entity); BdApi.showToast("Copied: '" + entity + "' To Clipboard") },
-            role: 'button',
-            target: '_blank'
-          }, entity)
-        )
-      }
+    // console.log(res) 
+    if (!regex.test(args[0])) { // if it fails regex test, just return it as it as
+      rendered.push(res);
+      return rendered
     }
-
+    // console.log("This one pass: " + args[0])
+    
+    //
+    //Update June 28th, 2023: this might be the best solution, but actually its faster now since I'm right away returning if reges fail
+    // console.log(res) if you print this, you will understand the recent changes
+    //with recent changes, res now split into multiple smaller items, each space or / is a new item
+    //the optimum way I think is that I don't change how they are doing it, just replace the items with a hyperlink item
+    //
+    const mentions = args[0].split(/(\/(?:join|invite) .+#\d{4})/i) //this will split the sentence into multiple items, all we wll just push them as they are, except the one matching our regest, we will replace it with a hyperlink
+    // console.log(mentions)
+    for (const mention of mentions) {
+      if (!regex.test(mention)) {
+            // console.log("xxxx  ===  " + mention)
+            rendered.push(mention)
+            continue
+      }
+      const entity = mention.match(/(\/(?:join|invite) .+#\d{4})/i)[1]
+      rendered.push(
+            BdApi.React.createElement('a', {
+              title: "Copy: '" + entity + "'",
+              rel: 'noreferrer noopener',
+              onClick: () => { DiscordNative.clipboard.copy(entity); BdApi.showToast("Copied: '" + entity + "' To Clipboard") },
+              role: 'button',
+              target: '_blank'
+            }, entity)
+          )
+    }
     return rendered
+   
   }
 };
 
