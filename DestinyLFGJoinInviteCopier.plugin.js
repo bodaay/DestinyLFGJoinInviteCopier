@@ -4,7 +4,7 @@
  * @description Render /join /invite Destiny LFG as hyperlinks for easy copying
  * @website https://github.com/bodaay/DestinyLFGJoinInviteCopier
  * @source https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js
- * @version 1.2.0
+ * @version 1.3.0
  */
 /*@cc_on
 @if (@_jscript)
@@ -46,14 +46,14 @@ module.exports = class DestinyLFGJoinInviteCopier {
   }
   inject(args, res) {
     // console.log(args[0])
-    const regex = /\/(?:join|invite) .+#\d{4}/gi
+    const regex = /\/(?:join|invite) .+?#\d{4}/gi
     const rendered = []
     // console.log(res) 
     if (!regex.test(args[0])) { // if it fails regex test, just return it as it as
       rendered.push(res);
       return rendered
     }
-    // console.log("This one pass: " + args[0])
+    // console.log("This one pass: " + args[0]) 
     
     //
     //Update June 28th, 2023: this might be the best solution, but actually its faster now since I'm right away returning if reges fail
@@ -61,7 +61,7 @@ module.exports = class DestinyLFGJoinInviteCopier {
     //with recent changes, res now split into multiple smaller items, each space or / is a new item
     //the optimum way I think is that I don't change how they are doing it, just replace the items with a hyperlink item
     //
-    const mentions = args[0].split(/(\/(?:join|invite) .+#\d{4})/i) //this will split the sentence into multiple items, all we wll just push them as they are, except the one matching our regest, we will replace it with a hyperlink
+    const mentions = args[0].split(/(\/(?:join|invite) .+?#\d{4})/i) //this will split the sentence into multiple items, all we wll just push them as they are, except the one matching our regest, we will replace it with a hyperlink
     // console.log(mentions)
     for (const mention of mentions) {
       if (!regex.test(mention)) {
@@ -69,7 +69,20 @@ module.exports = class DestinyLFGJoinInviteCopier {
             rendered.push(mention)
             continue
       }
-      const entity = mention.match(/(\/(?:join|invite) .+#\d{4})/i)[1]
+      const entity = mention.match(/(\/(?:join|invite) .+?#\d{4})/i)[1]
+      const entity_es = entity.replace(/\/join|\/invite/gi, function(matched) {
+        return matched.toLowerCase() === '/join' ? '/unirse' : '/invitar';
+      });
+      const entity_fr = entity.replace(/\/join|\/invite/gi, function(matched) {
+        return matched.toLowerCase() === '/join' ? '/rejoindre' : '/inviter';
+      });
+      const entity_it = entity.replace(/\/join|\/invite/gi, function(matched) {
+        return matched.toLowerCase() === '/join' ? '/partecipa' : '/invita';
+      });
+      const entity_de = entity.replace(/\/join|\/invite/gi, function(matched) {
+        return matched.toLowerCase() === '/join' ? '/beitreten' : '/einladen';
+      });
+      //English
       rendered.push(
             BdApi.React.createElement('a', {
               title: "Copy: '" + entity + "'",
@@ -79,6 +92,66 @@ module.exports = class DestinyLFGJoinInviteCopier {
               target: '_blank'
             }, entity)
           )
+      rendered.push(BdApi.React.createElement(
+            'span',
+            null, // No props are needed since it's just text
+            "  |  "  // This is the text you want to display
+      ))
+      //Spanish
+      rendered.push(
+        BdApi.React.createElement('a', {
+          title: "Copy: '" + entity_es + "'",
+          rel: 'noreferrer noopener',
+          onClick: () => { DiscordNative.clipboard.copy(entity_es); BdApi.showToast("Copied: '" + entity_es + "' To Clipboard") },
+          role: 'button',
+          target: '_blank'
+        }, "es")
+      )
+      rendered.push(BdApi.React.createElement(
+        'span',
+        null, // No props are needed since it's just text
+        "  |  "  // This is the text you want to display
+  ))
+  //French
+  rendered.push(
+    BdApi.React.createElement('a', {
+      title: "Copy: '" + entity_fr + "'",
+      rel: 'noreferrer noopener',
+      onClick: () => { DiscordNative.clipboard.copy(entity_fr); BdApi.showToast("Copied: '" + entity_fr + "' To Clipboard") },
+      role: 'button',
+      target: '_blank'
+    }, "fr")
+  )
+  rendered.push(BdApi.React.createElement(
+    'span',
+    null, // No props are needed since it's just text
+    "  |  "  // This is the text you want to display
+))
+//Italian
+rendered.push(
+BdApi.React.createElement('a', {
+  title: "Copy: '" + entity_it + "'",
+  rel: 'noreferrer noopener',
+  onClick: () => { DiscordNative.clipboard.copy(entity_it); BdApi.showToast("Copied: '" + entity_it + "' To Clipboard") },
+  role: 'button',
+  target: '_blank'
+}, "it")
+)
+rendered.push(BdApi.React.createElement(
+  'span',
+  null, // No props are needed since it's just text
+  "  |  "  // This is the text you want to display
+))
+//Deutsch
+rendered.push(
+BdApi.React.createElement('a', {
+title: "Copy: '" + entity_de + "'",
+rel: 'noreferrer noopener',
+onClick: () => { DiscordNative.clipboard.copy(entity_de); BdApi.showToast("Copied: '" + entity_de + "' To Clipboard") },
+role: 'button',
+target: '_blank'
+}, "de")
+)
     }
     return rendered
    
