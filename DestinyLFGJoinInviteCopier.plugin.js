@@ -4,7 +4,7 @@
  * @description Render /join /invite Destiny LFG as hyperlinks for easy copying
  * @website https://github.com/bodaay/DestinyLFGJoinInviteCopier
  * @source https://raw.githubusercontent.com/bodaay/DestinyLFGJoinInviteCopier/master/DestinyLFGJoinInviteCopier.plugin.js
- * @version 1.3.0
+ * @version 1.4.0
  */
 /*@cc_on
 @if (@_jscript)
@@ -31,14 +31,55 @@
 @else@*/
 
 module.exports = class DestinyLFGJoinInviteCopier {
+  static mySettings = {enable_es: true,enable_fr: true,enable_it: true,enable_de: true};
   constructor(meta) {
     // Do stuff in here before starting
+    
   }
+  static buildSetting(text, key, type, value, callback = () => {}) {
+      const setting = Object.assign(document.createElement("div"), {className: "setting"});
+      const label = Object.assign(document.createElement("span"), {textContent: text});
+      const input = Object.assign(document.createElement("input"), {type: type, name: key, value: value});
+      if (type == "checkbox" && value) input.checked = true;
+      input.addEventListener("change", () => {
+          const newValue = type == "checkbox" ? input.checked : input.value;
+          DestinyLFGJoinInviteCopier.mySettings[key] = newValue;
+          BdApi.Data.save(DestinyLFGJoinInviteCopier.name, "settings", DestinyLFGJoinInviteCopier.mySettings);
+          callback(newValue);
+      });
+      setting.append(label, input);
+      return setting;
+  }
+  static enabled_Langauge(name){
+      //TODO, show at least something when we change the value here of the checkbox
+  }
+  getSettingsPanel() {
+    const mySettingsPanel = document.createElement("div");
+    mySettingsPanel.id = "my-settings";
+    //Langauge Settings
+      //Espanol
+      const es_lang_Setting = DestinyLFGJoinInviteCopier.buildSetting("Espanol", "enable_es", "checkbox",
+              DestinyLFGJoinInviteCopier.mySettings.enable_es, DestinyLFGJoinInviteCopier.enabled_Langauge("Espanol"));
+      const fr_lang_Setting = DestinyLFGJoinInviteCopier.buildSetting("French", "enable_fr", "checkbox",
+              DestinyLFGJoinInviteCopier.mySettings.enable_fr, DestinyLFGJoinInviteCopier.enabled_Langauge("French"));
+      const it_lang_Setting = DestinyLFGJoinInviteCopier.buildSetting("Italian", "enable_it", "checkbox",
+              DestinyLFGJoinInviteCopier.mySettings.enable_it, DestinyLFGJoinInviteCopier.enabled_Langauge("Italian"));
+      const de_lang_Setting = DestinyLFGJoinInviteCopier.buildSetting("Deutsch", "enable_de", "checkbox",
+              DestinyLFGJoinInviteCopier.mySettings.enable_de, DestinyLFGJoinInviteCopier.enabled_Langauge("Italian"));
+     
+    //add all
+    mySettingsPanel.append(es_lang_Setting,fr_lang_Setting,it_lang_Setting,de_lang_Setting);
+
+    return mySettingsPanel;
+}
   start() {
+    //load saved settings
+    Object.assign(DestinyLFGJoinInviteCopier.mySettings, BdApi.Data.load(DestinyLFGJoinInviteCopier.name, "settings"));
     // Do stuff when enabled
     const parser = BdApi.Webpack.getModule(BdApi.Webpack.Filters.byProps("parse", "parseTopic"));
     // console.log(parser)
     BdApi.Patcher.after("DestinyLFGPatcher", parser, 'parse', (_, args, res) => this.inject(args, res));
+   
   }
   stop() {
     // Cleanup when disabled
@@ -82,6 +123,11 @@ module.exports = class DestinyLFGJoinInviteCopier {
       const entity_de = entity.replace(/\/join|\/invite/gi, function(matched) {
         return matched.toLowerCase() === '/join' ? '/beitreten' : '/einladen';
       });
+
+      var enable_es=DestinyLFGJoinInviteCopier.mySettings.enable_es;
+      var enable_fr=DestinyLFGJoinInviteCopier.mySettings.enable_fr;
+      var enable_it=DestinyLFGJoinInviteCopier.mySettings.enable_it;
+      var enable_de=DestinyLFGJoinInviteCopier.mySettings.enable_de;
       //English
       rendered.push(
             BdApi.React.createElement('a', {
@@ -92,27 +138,33 @@ module.exports = class DestinyLFGJoinInviteCopier {
               target: '_blank'
             }, entity)
           )
-      rendered.push(BdApi.React.createElement(
-            'span',
-            null, // No props are needed since it's just text
-            "  |  "  // This is the text you want to display
-      ))
-      //Spanish
-      rendered.push(
-        BdApi.React.createElement('a', {
-          title: "Copy: '" + entity_es + "'",
-          rel: 'noreferrer noopener',
-          onClick: () => { DiscordNative.clipboard.copy(entity_es); BdApi.showToast("Copied: '" + entity_es + "' To Clipboard") },
-          role: 'button',
-          target: '_blank'
-        }, "es")
-      )
-      rendered.push(BdApi.React.createElement(
-        'span',
-        null, // No props are needed since it's just text
-        "  |  "  // This is the text you want to display
-  ))
+     
+      //Espanol
+      if (enable_es){
+          rendered.push(BdApi.React.createElement(
+              'span',
+              null, // No props are needed since it's just text
+              "  |  "  // This is the text you want to display
+          ))
+          rendered.push(
+            BdApi.React.createElement('a', {
+              title: "Copy: '" + entity_es + "'",
+              rel: 'noreferrer noopener',
+              onClick: () => { DiscordNative.clipboard.copy(entity_es); BdApi.showToast("Copied: '" + entity_es + "' To Clipboard") },
+              role: 'button',
+              target: '_blank'
+            }, "es")
+          )
+        
+      }
+
   //French
+  if (enable_fr){
+      rendered.push(BdApi.React.createElement(
+          'span',
+          null, // No props are needed since it's just text
+          "  |  "  // This is the text you want to display
+      ))
   rendered.push(
     BdApi.React.createElement('a', {
       title: "Copy: '" + entity_fr + "'",
@@ -122,36 +174,41 @@ module.exports = class DestinyLFGJoinInviteCopier {
       target: '_blank'
     }, "fr")
   )
-  rendered.push(BdApi.React.createElement(
-    'span',
-    null, // No props are needed since it's just text
-    "  |  "  // This is the text you want to display
-))
+}
 //Italian
-rendered.push(
-BdApi.React.createElement('a', {
-  title: "Copy: '" + entity_it + "'",
-  rel: 'noreferrer noopener',
-  onClick: () => { DiscordNative.clipboard.copy(entity_it); BdApi.showToast("Copied: '" + entity_it + "' To Clipboard") },
-  role: 'button',
-  target: '_blank'
-}, "it")
-)
-rendered.push(BdApi.React.createElement(
-  'span',
-  null, // No props are needed since it's just text
-  "  |  "  // This is the text you want to display
-))
+if (enable_it){
+              rendered.push(BdApi.React.createElement(
+                  'span',
+                  null, // No props are needed since it's just text
+                  "  |  "  // This is the text you want to display
+              ))
+          rendered.push(
+          BdApi.React.createElement('a', {
+              title: "Copy: '" + entity_it + "'",
+              rel: 'noreferrer noopener',
+              onClick: () => { DiscordNative.clipboard.copy(entity_it); BdApi.showToast("Copied: '" + entity_it + "' To Clipboard") },
+              role: 'button',
+              target: '_blank'
+          }, "it")
+          )
+}
 //Deutsch
-rendered.push(
-BdApi.React.createElement('a', {
-title: "Copy: '" + entity_de + "'",
-rel: 'noreferrer noopener',
-onClick: () => { DiscordNative.clipboard.copy(entity_de); BdApi.showToast("Copied: '" + entity_de + "' To Clipboard") },
-role: 'button',
-target: '_blank'
-}, "de")
-)
+if (enable_de){
+          rendered.push(BdApi.React.createElement(
+              'span',
+              null, // No props are needed since it's just text
+              "  |  "  // This is the text you want to display
+          ))
+      rendered.push(
+      BdApi.React.createElement('a', {
+      title: "Copy: '" + entity_de + "'",
+      rel: 'noreferrer noopener',
+      onClick: () => { DiscordNative.clipboard.copy(entity_de); BdApi.showToast("Copied: '" + entity_de + "' To Clipboard") },
+      role: 'button',
+      target: '_blank'
+      }, "de")
+      )
+  }
     }
     return rendered
    
